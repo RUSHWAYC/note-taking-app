@@ -22,3 +22,15 @@ export interface IRawNoteData {
   markdown: string;
   tagIds: string[];
 }
+
+export interface INoteProps {
+  onSubmit: (data: INoteData) => void;
+  onAddTag: (tag: ITag) => void;
+  availableTags: ITag[];
+}
+
+export interface ISimplifiedNote {
+  tags: ITag[];
+  title: string;
+  id: string;
+}

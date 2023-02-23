@@ -1,21 +1,16 @@
-import { useState } from "react";
-import { useRef } from "react";
+import { useState, useRef } from "react";
 import { Form, Stack, Row, Col, Button } from "react-bootstrap";
 import CreatableReactSelect from "react-select/creatable";
-import { Link } from "react-router-dom";
-import { INoteData, ITag } from "./types";
+import { Link, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
-interface INoteFormProps {
-  onSubmit: (data: INoteData) => void;
-  onAddTag: (tag: ITag) => void;
-  availableTags: ITag[];
-}
+import { INoteProps, ITag } from "../types";
 
-const NoteForm = ({ onSubmit, onAddTag, availableTags }: INoteFormProps) => {
+const NoteForm = ({ onSubmit, onAddTag, availableTags }: INoteProps) => {
   const titleRef = useRef<HTMLInputElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
   const [selectedTags, setSelectedTags] = useState<ITag[]>([]);
+  const navigate = useNavigate();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -24,6 +19,7 @@ const NoteForm = ({ onSubmit, onAddTag, availableTags }: INoteFormProps) => {
       markdown: markdownRef.current!.value,
       tags: selectedTags,
     });
+    navigate("..");
   }
 
   return (
