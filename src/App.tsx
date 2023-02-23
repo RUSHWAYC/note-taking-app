@@ -1,34 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useMemo } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Container } from "react-bootstrap";
+import { Routes, Route, Navigate } from "react-router-dom";
+import NewNote from "./NewNote";
+import { useLocalStorage } from "./hooks/useLocalStorage";
+import { INote, INoteData, IRawNote, ITag } from "./types";
+import { v4 as uuidv4 } from "uuid";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [notes, setNotes] = useLocalStorage<IRawNote[]>("NOTES", []);
+  const [tags, setTags] = useLocalStorage<ITag[]>("TAGS", []);
+
+  const notesWithTags = useMemo(() => {
+    return notes.map((note) => {
+      return {
+        ...note,
+        tags: tags.filter((tag) => note.tagIds.includes(tag.id)),
+      };
+    });
+  }, [notes, tags]);
+
+  function onCreateNote({ tags, ...data }: INoteData) {
+    setNotes((prevNotes: Array<INote>) => {
+      return [
+        ...prevNotes,
+        { ...data, id: uuidv4(), tagIds: tags.map((tag) => tag.id) },
+      ];
+    });
+  }
+
+  function addTag(tag: ITag) {
+    setTags((prev: ITag[]) => [...prev, tag]);
+  }
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
-}
+    <Container className="my-4">
+      <Routes>
+        <Route path="/" element={<h1>Hi</h1>} />
+        <Route
+          path="/new"
+          element={
+            <NewNote
+              onSubmit={onCreateNote}
+              onAddTag={addTag}
+              availableTags={tags}
+            />
+          }
+        />
+        <Route path="/:id">
+          <Route index element={<h1>Show</h1>} />
+          <Route path="edit" element={<h1>Edit</h1>} />
+        </Route>
+        <Route path="/*" element={<Navigate to="/" />} />
+      </Routes>
+    </Container>
+  );
+};
 
-export default App
+export default App;
