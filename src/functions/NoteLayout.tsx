@@ -4,13 +4,13 @@ import {
   useOutletContext,
   useParams,
 } from "react-router-dom";
-import { INote } from "../types";
+import { Note } from "../App";
 
-interface INoteLayoutProps {
-  notes: INote[];
-}
+type NoteLayoutProps = {
+  notes: Note[];
+};
 
-export function NoteLayout({ notes }: INoteLayoutProps) {
+export function NoteLayout({ notes }: NoteLayoutProps) {
   const { id } = useParams();
   const note = notes.find((n) => n.id === id);
 
@@ -20,5 +20,5 @@ export function NoteLayout({ notes }: INoteLayoutProps) {
 }
 
 export function useNote() {
-  return useOutletContext<INote>();
+  return useOutletContext<Note>();
 }

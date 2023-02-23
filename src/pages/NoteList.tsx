@@ -3,16 +3,31 @@ import { Col, Row, Stack, Button, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import ReactSelect from "react-select";
 import NoteCard from "../components/NoteCard";
-import { INote, ISimplifiedNote, ITag } from "../types";
+import { Tag } from "../App";
+import EditTagsModal from "../components/EditTagsModal";
 
-interface INoteListProp {
-  availableTags: ITag[];
-  notes: ISimplifiedNote[];
-}
+export type SimplifiedNote = {
+  tags: Tag[];
+  title: string;
+  id: string;
+};
 
-const NoteList = ({ availableTags, notes }: INoteListProp) => {
-  const [selectedTags, setSelectedTags] = useState<ITag[]>([]);
+type NoteListProps = {
+  availableTags: Tag[];
+  notes: SimplifiedNote[];
+  onDeleteTag: (id: string) => void;
+  onUpdateTag: (id: string, label: string) => void;
+};
+
+const NoteList = ({
+  availableTags,
+  notes,
+  onUpdateTag,
+  onDeleteTag,
+}: NoteListProps) => {
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [title, setTitle] = useState<string>("");
+  const [editTagsModalIsOpen, setEditTagsModalIsOpen] = useState(false);
 
   //Function to make sure that it filters through notes
   //with all the tags that are selected.
@@ -40,7 +55,12 @@ const NoteList = ({ availableTags, notes }: INoteListProp) => {
             <Link to="/new">
               <Button variant="primary">Create</Button>
             </Link>
-            <Button variant="outline-secondary">Edit Tags</Button>
+            <Button
+              onClick={() => setEditTagsModalIsOpen(true)}
+              variant="outline-secondary"
+            >
+              Edit Tags
+            </Button>
           </Stack>
         </Col>
       </Row>
@@ -86,6 +106,13 @@ const NoteList = ({ availableTags, notes }: INoteListProp) => {
           </Col>
         ))}
       </Row>
+      <EditTagsModal
+        onUpdateTag={onUpdateTag}
+        onDeleteTag={onDeleteTag}
+        show={editTagsModalIsOpen}
+        handleClose={() => setEditTagsModalIsOpen(false)}
+        availableTags={availableTags}
+      />
     </>
   );
 };

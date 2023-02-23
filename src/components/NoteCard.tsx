@@ -1,9 +1,9 @@
-import { ISimplifiedNote } from "../types";
 import { Badge, Card, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import styles from "./NoteCard.module.css";
+import { SimplifiedNote } from "../pages/NoteList";
 
-const NoteCard = ({ id, title, tags }: ISimplifiedNote) => {
+const NoteCard = ({ id, title, tags }: SimplifiedNote) => {
   return (
     <Card
       as={Link}
